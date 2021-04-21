@@ -1,45 +1,62 @@
 radio.onReceivedNumber(function (receivedNumber) {
     basic.showNumber(receivedNumber)
-    if (receivedNumber == 0) {
-        bitbot.stop(BBStopMode.Coast)
-    } else if (receivedNumber == 1) {
-        bitbot.go(BBDirection.Forward, 50)
-    } else if (receivedNumber == 4) {
-        bitbot.go(BBDirection.Reverse, 50)
-    } else if (receivedNumber == 2) {
-        bitbot.rotate(BBRobotDirection.Left, 50)
-    } else if (receivedNumber == 3) {
-        bitbot.rotate(BBRobotDirection.Right, 50)
-    } else if (receivedNumber == 5) {
-        bitbot.move(BBMotor.Left, BBDirection.Reverse, 50)
-    } else if (receivedNumber == 6) {
-        bitbot.move(BBMotor.Right, BBDirection.Reverse, 50)
+    move_bit_bot(receivedNumber)
+})
+function move_bit_bot (code: number) {
+    if (code == 0) {
+        bitbot.stop(BBStopMode.Brake)
+    } else if (code == 1) {
+        bitbot.go(BBDirection.Forward, Speed)
+    } else if (code == 4) {
+        bitbot.go(BBDirection.Reverse, Speed)
+    } else if (code == 2) {
+        bitbot.rotate(BBRobotDirection.Left, TurnSpeed)
+    } else if (code == 3) {
+        bitbot.rotate(BBRobotDirection.Right, TurnSpeed)
+    } else if (code == 5) {
+        bitbot.rotate(BBRobotDirection.Right, TurnSpeed)
+    } else if (code == 6) {
+        bitbot.rotate(BBRobotDirection.Left, TurnSpeed)
     } else {
     	
     }
-})
-radio.setGroup(209)
+}
+function send_number (num: number) {
+    if (LastSentNumber != num) {
+        radio.sendNumber(num)
+        LastSentNumber = num
+        basic.pause(300)
+    }
+}
+let LastSentNumber = 0
+let TurnSpeed = 0
+let Speed = 0
+Speed = 50
+TurnSpeed = Speed / 2
+LastSentNumber = 0
+radio.setGroup(3)
 bitbot.ledRainbow()
 basic.forever(function () {
     if (input.rotation(Rotation.Pitch) < 0) {
         if (input.buttonIsPressed(Button.AB)) {
-            radio.sendNumber(1)
+            send_number(1)
         } else if (input.buttonIsPressed(Button.A)) {
-            radio.sendNumber(2)
+            send_number(2)
         } else if (input.buttonIsPressed(Button.B)) {
-            radio.sendNumber(3)
+            send_number(3)
         } else {
-            radio.sendNumber(0)
+            send_number(0)
         }
     } else {
         if (input.buttonIsPressed(Button.AB)) {
-            radio.sendNumber(4)
+            send_number(4)
         } else if (input.buttonIsPressed(Button.A)) {
-            radio.sendNumber(5)
+            send_number(5)
         } else if (input.buttonIsPressed(Button.B)) {
-            radio.sendNumber(6)
+            send_number(6)
         } else {
-            radio.sendNumber(0)
+            send_number(0)
         }
     }
+    basic.pause(60)
 })
